@@ -1,34 +1,40 @@
 <!DOCTYPE html>
-
 <html>
-  <head>
-    <title>Quiz App</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="app">
-      <div class="container" id="start-screen">
-        <!-- <h1>Welcome to the Tech Quiz!</h1>
-        <input type="text" id="username" placeholder="Enter your name" />
-        <select id="category">
-          <option value="JavaScript">JavaScript</option>
-          <option value="HTML">HTML</option>
-          <option value="CSS">CSS</option>
-        </select>
-        <button id="start-btn">Start Quiz</button>
-      </div> -->
-
-      <div class="quiz">
-        <h2 id="question">Questions</h2>
-        <div id="answer-buttons">
-          <button class="btn">Answer 1</button>
-          <button class="btn">Answer 2</button>
-          <button class="btn">Answer 3</button>
-          <button class="btn">Answer 4</button>
-        </div>
-        <button id="next-btn">Next</button>
-      </div>
+<head>
+  <title>Quiz App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Start Screen -->
+    <div class="container" id="start-screen">
+      <h2>Welcome to the Quiz!</h2>
+      <label for="username">Enter your name:</label>
+      <input type="text" id="username" placeholder="Your name" required />
+      
+      <label for="category">Choose a category:</label>
+      <select id="category">
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="javascript">JavaScript</option>
+      </select>
+      
+      <button id="start-btn">Start Quiz</button>
     </div>
-    <script src="quizz_functions.js"></script>
-  </body>
+
+    <!-- Quiz Screen (Initially Hidden) -->
+    <div class="quiz container" id="quiz-screen" style="display: none;">
+      <h2 id="question">Question text</h2>
+      <div id="answer-buttons">
+        <button class="btn">Answer 1</button>
+        <button class="btn">Answer 2</button>
+        <button class="btn">Answer 3</button>
+        <button class="btn">Answer 4</button>
+      </div>
+      <button id="next-btn">Next</button>
+    </div>
+  </div>
+
+  <script src="quizz_functions.js"></script>
+</body>
 </html>
