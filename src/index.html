@@ -1,40 +1,52 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Quiz App</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div class="app">
-    <!-- Start Screen -->
-    <div class="container" id="start-screen">
-      <h2>Welcome to the Quiz!</h2>
-      <label for="username">Enter your name:</label>
-      <input type="text" id="username" placeholder="Your name" required />
-      
-      <label for="category">Choose a category:</label>
-      <select id="category">
-        <option value="html">HTML</option>
-        <option value="css">CSS</option>
-        <option value="javascript">JavaScript</option>
-      </select>
-      
-      <button id="start-btn">Start Quiz</button>
-    </div>
+<html lang="en">
 
-    <!-- Quiz Screen (Initially Hidden) -->
-    <div class="quiz container" id="quiz-screen" style="display: none;">
-      <h2 id="question">Question text</h2>
-      <div id="answer-buttons">
-        <button class="btn">Answer 1</button>
-        <button class="btn">Answer 2</button>
-        <button class="btn">Answer 3</button>
-        <button class="btn">Answer 4</button>
-      </div>
-      <button id="next-btn">Next</button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tech Quiz App</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container" id="start-screen">
+    <h1>Welcome to the Tech Quiz!</h1>
+    <input type="text" id="username" placeholder="Enter your name" />
+    <select id="category">
+      <option value="JavaScript">JavaScript</option>
+      <option value="HTML">HTML</option>
+      <option value="CSS">CSS</option>
+    </select>
+    <button id="start-btn">Start Quiz</button>
+    <button onclick="location.href='admin.html'">Admin</button>
+    <button id="view-scores-btn">View High Scores</button>
+  </div>
+
+  <div class="container hidden" id="quiz-screen">
+    <div class="quiz-header">
+      <h2 id="question"></h2>
+      <div id="timer">15</div>
+    </div>
+    <ul id="answers"></ul>
+    <div class="progress-bar">
+      <div id="progress"></div>
     </div>
   </div>
 
-  <script src="quizz_functions.js"></script>
+  <div class="container hidden" id="result-screen">
+    <h2>Quiz Completed!</h2>
+    <p id="score-display"></p>
+    <button onclick="location.reload()">Play Again</button>
+    <button onclick="location.href='index.html'">Home</button>
+  </div>
+
+  <div class="container hidden" id="high-scores-screen">
+    <h2>High Scores</h2>
+    <ul id="high-scores-list"></ul>
+    <button id="back-btn">Back</button>
+  </div>
+
+  <script src="scripts.js"></script>
 </body>
+
 </html>

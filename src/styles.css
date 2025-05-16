@@ -1,0 +1,83 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
+}
+
+input, select, button {
+  margin: 1rem 0;
+  padding: 0.8rem;
+  width: 100%;
+  font-size: 1rem;
+}
+
+#timer {
+  font-size: 1.2rem;
+  color: #ff4444;
+}
+
+ul#answers {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+ul#answers li {
+  background: #f8f8f8;
+  margin: 0.5rem 0;
+  padding: 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+ul#answers li:hover {
+  background: #e0e0e0;
+}
+
+.progress-bar {
+  background: #e0e0e0;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+#progress {
+  height: 100%;
+  width: 0;
+  background: #4caf50;
+  transition: width 0.3s;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  input, select, button {
+    font-size: 0.9rem;
+  }
+}

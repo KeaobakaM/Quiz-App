@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - Tech Quiz</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Panel</h1>
+    <select id="admin-category">
+      <option value="JavaScript">JavaScript</option>
+      <option value="HTML">HTML</option>
+      <option value="CSS">CSS</option>
+    </select>
+
+    <input type="text" id="admin-question" placeholder="Enter question" />
+    <input type="text" id="admin-answers" placeholder="Enter answers comma-separated (correct first)" />
+    <button id="add-question-btn">Add Question</button>
+
+    <input type="number" id="question-limit" placeholder="Set number of quiz questions" />
+    <button id="save-limit-btn">Save Limit</button>
+      <button onclick="location.href='index.html'">Home</button>
+
+
+    <div id="admin-msg"></div>
+  </div>
+
+  <script>
+    const addBtn = document.getElementById('add-question-btn');
+    const saveLimitBtn = document.getElementById('save-limit-btn');
+    const msgBox = document.getElementById('admin-msg');
+
+    addBtn.addEventListener('click', () => {
+      const category = document.getElementById('admin-category').value;
+      const question = document.getElementById('admin-question').value.trim();
+      const answers = document.getElementById('admin-answers').value.split(',').map(a => a.trim());
+
+      if (!question || answers.length < 2) return alert('Provide a valid question and at least 2 answers.');
+
+      let allQuestions = JSON.parse(localStorage.getItem('adminQuestions') || '{}');
+      if (!allQuestions[category]) allQuestions[category] = [];
+      allQuestions[category].push({ question, answers, correct: answers[0] });
+
+      localStorage.setItem('adminQuestions', JSON.stringify(allQuestions));
+      msgBox.textContent = 'Question added successfully!';
+    });
+
+    saveLimitBtn.addEventListener('click', () => {
+      const limit = parseInt(document.getElementById('question-limit').value);
+      if (isNaN(limit) || limit <= 0) return alert('Enter a valid number');
+      localStorage.setItem('questionLimit', limit);
+      msgBox.textContent = 'Question limit saved!';
+    });
+  </script>
+</body>
+</html>
