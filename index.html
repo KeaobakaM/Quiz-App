@@ -9,97 +9,68 @@
   <body>
     <div class="container">
       <!-- Welcome Screen -->
-      <div id="welcome-screen" class="screen">
-        <h1>Tech Quiz Challenge</h1>
-        <input type="text" id="username" placeholder="Enter your name" />
-        <div class="category-select">
-          <h2>Select a Category</h2>
-          <div id="categories" class="categories"></div>
-        </div>
-        <button id="start-quiz">Start Quiz</button>
-        <button id="admin-login">Admin Login</button>
+      <div id="welcome-screen" class="screen active">
+        <h1>Tech Quiz</h1>
+        <input type="text" id="username" placeholder="Your name" required />
+        <h3>Select Category:</h3>
+        <div id="categories"></div>
+        <button id="start-btn">Start Quiz</button>
+        <a href="#" id="admin-link">Admin Panel</a>
       </div>
 
       <!-- Quiz Screen -->
-      <div id="quiz-screen" class="screen hidden">
+      <div id="quiz-screen" class="screen">
         <div class="quiz-header">
-          <div class="user-info">
-            <span id="current-user"></span>
-            <span id="current-category"></span>
-          </div>
-          <div class="quiz-stats">
-            <span id="question-count"></span>
-            <span id="timer">30s</span>
-            <span id="score">Score: 0</span>
-          </div>
+          <span id="question-count"></span>
+          <span id="timer"></span>
         </div>
-        <div class="progress-container">
-          <div id="progress-bar" class="progress-bar"></div>
-        </div>
-        <div id="question-container">
-          <h2 id="question-text"></h2>
-          <div id="options" class="options"></div>
-        </div>
-        <button id="next-question" class="hidden">Next Question</button>
+        <div id="progress-bar"></div>
+        <h2 id="question"></h2>
+        <div id="options"></div>
+        <button id="next-btn">Next</button>
       </div>
 
       <!-- Results Screen -->
-      <div id="results-screen" class="screen hidden">
-        <h2>Quiz Completed!</h2>
-        <p id="final-score"></p>
-        <div class="high-scores">
-          <h3>High Scores</h3>
-          <ol id="high-scores-list"></ol>
-        </div>
-        <button id="restart-quiz">Take Another Quiz</button>
+      <div id="results-screen" class="screen">
+        <h2>Quiz Complete!</h2>
+        <p id="score"></p>
+        <h3>High Scores</h3>
+        <ol id="high-scores"></ol>
+        <button id="restart-btn">Restart Quiz</button>
       </div>
 
       <!-- Admin Screen -->
-      <div id="admin-screen" class="screen hidden">
+      <div id="admin-screen" class="screen">
         <h2>Admin Panel</h2>
-        <div class="admin-actions">
-          <button id="add-question">Add New Question</button>
-          <button id="view-questions">View/Edit Questions</button>
-          <button id="logout">Logout</button>
-        </div>
-
-        <!-- Question Management Form -->
-        <div id="question-form" class="hidden">
-          <h3>Add/Edit Question</h3>
-          <select id="form-category">
+        <div class="admin-controls">
+          <select id="category-select">
             <option value="javascript">JavaScript</option>
             <option value="html">HTML</option>
             <option value="css">CSS</option>
             <option value="general">General Tech</option>
           </select>
-          <input
-            type="text"
-            id="question-text-input"
-            placeholder="Question text"
-          />
+          <input type="text" id="question-input" placeholder="Question" />
           <div id="answer-inputs">
             <input
               type="text"
-              class="answer-input"
-              placeholder="Option 1"
+              placeholder="Answer 1 (correct)"
               data-correct="true"
             />
-            <input type="text" class="answer-input" placeholder="Option 2" />
-            <input type="text" class="answer-input" placeholder="Option 3" />
-            <input type="text" class="answer-input" placeholder="Option 4" />
+            <input type="text" placeholder="Answer 2" />
+            <input type="text" placeholder="Answer 3" />
+            <input type="text" placeholder="Answer 4" />
           </div>
-          <button id="save-question">Save Question</button>
-          <button id="cancel-edit">Cancel</button>
+          <button id="save-btn">Save Question</button>
+          <button id="back-btn">Back to Quiz</button>
         </div>
-
-        <!-- Questions List -->
-        <div id="questions-list" class="hidden">
-          <h3>Questions</h3>
-          <div id="questions-container"></div>
-        </div>
+        <div id="questions-list"></div>
       </div>
     </div>
 
+    <script src="quiz-data.js"></script>
+    <script src="utils.js"></script>
+    <script src="quiz-functions.js"></script>
+    <script src="admin-functions.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
