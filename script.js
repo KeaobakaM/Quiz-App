@@ -13,7 +13,6 @@ const restartBtn = document.getElementById("restart-btn");
 
 let currentQuestionIndex = 0;
 let currentScore = 0;
-let timeLeft = 20;
 let timer;
 let selectedQuestions = [];
 
@@ -64,7 +63,6 @@ const questions = {
       answer: "margin: 0 auto;"
     }
   ]
-  // Add more categories as needed!
 };
 
 startBtn.addEventListener("click", startQuiz);
@@ -90,29 +88,18 @@ function startQuiz() {
 
   currentQuestionIndex = 0;
   currentScore = 0;
-  timeLeft = 20;
 
-  startTimer();
   showQuestion();
 }
 
-function startTimer() {
-  timerDisplay.textContent = `Time: ${timeLeft}`;
-  timer = setInterval(() => {
-    timeLeft--;
-    timerDisplay.textContent = `Time: ${timeLeft}`;
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      endQuiz();
-    }
-  }, 1000);
-}
-
 function showQuestion() {
+  clearInterval(timer);
   const currentQ = selectedQuestions[currentQuestionIndex];
-  questionText.textContent = currentQ.question;
+  let timeLeft = 10;
 
+  questionText.textContent = currentQ.question;
   answerOptions.innerHTML = "";
+
   currentQ.options.forEach(option => {
     const li = document.createElement("li");
     li.textContent = option;
@@ -120,31 +107,57 @@ function showQuestion() {
     answerOptions.appendChild(li);
   });
 
+  timerDisplay.textContent = `Time: ${timeLeft}`;
+  timer = setInterval(() => {
+    timeLeft--;
+    timerDisplay.textContent = `Time: ${timeLeft}`;
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      handleTimeout(currentQ.answer);
+    }
+  }, 1000);
+
   updateProgress();
 }
 
 function selectAnswer(selectedEl, correctAnswer) {
-  const allOptions = answerOptions.querySelectorAll("li");
+  clearInterval(timer);
 
+  const allOptions = answerOptions.querySelectorAll("li");
   allOptions.forEach(li => {
-    li.removeEventListener("click", () => {});
     li.classList.add(
       li.textContent === correctAnswer ? "correct" : "incorrect"
     );
+    li.style.pointerEvents = "none";
   });
 
   if (selectedEl.textContent === correctAnswer) {
     currentScore++;
   }
 
-  setTimeout(() => {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < selectedQuestions.length) {
-      showQuestion();
-    } else {
-      endQuiz();
-    }
-  }, 1000);
+  setTimeout(nextQuestion, 1000);
+}
+
+function handleTimeout(correctAnswer) {
+  const allOptions = answerOptions.querySelectorAll("li");
+  allOptions.forEach(li => {
+    li.classList.add(
+      li.textContent === correctAnswer ? "correct" : "incorrect"
+    );
+    li.style.pointerEvents = "none";
+  });
+
+  setTimeout(nextQuestion, 1000);
+}
+
+function nextQuestion() {
+  currentQuestionIndex++;
+  if (currentQuestionIndex < selectedQuestions.length) {
+    showQuestion();
+  } else {
+    endQuiz();
+  }
 }
 
 function updateProgress() {
@@ -159,8 +172,6 @@ function endQuiz() {
   resultScreen.classList.remove("hidden");
 
   scoreDisplay.textContent = `You scored ${currentScore} out of ${selectedQuestions.length}`;
-
-  // Save to localStorage
   const username = usernameInput.value.trim();
   localStorage.setItem("quizScore_" + username, currentScore);
 }
