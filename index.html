@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz App - Home</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<header class="header">
+  <div class="logo">🧠 QuizApp</div>
+  <div class="admin-icon">
+    <a href="admin.html" title="Admin Dashboard">
+      <i class="fa-solid fa-user" style="color: #fff;"></i>
+    </a>
+  </div>
+</header>
+<main>
+   <div class="container">
+    <h1>Tech Quiz</h1>
+    <div id="start-screen">
+      <input type="text" id="username" placeholder="Enter your name" />
+      <select id="category">
+        <option value="">Select Category</option>
+        <option value="javascript">JavaScript</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="sql">SQL</option>
+        <option value="frontend">Frontend</option>
+        <option value="backend">Backend</option>
+        <option value="react">React</option>
+      </select>
+
+      <button id="start-btn">Start Quiz</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+      <div class="quiz-header">
+        <div id="timer">Time: 20</div>
+        <div id="progress-bar-container">
+          <div id="progress-bar"></div>
+        </div>
+      </div>
+      <div id="question-container">
+        <h2 id="question-text">Question?</h2>
+        <ul id="answer-options"></ul>
+      </div>
+    </div>
+
+    <div id="result-screen" class="hidden">
+      <h2>Quiz Complete!</h2>
+      <p id="score-display"></p>
+      <button id="restart-btn">Restart</button>
+    </div>
+  </div>
+ 
+</main>
+
+    <script src="script.js"></script>   
+</body>
+</html>
