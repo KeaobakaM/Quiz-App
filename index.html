@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz App - Home</title>
+  <title>Tech Quiz App</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -11,15 +11,18 @@
 <header class="header">
   <div class="logo">🧠 QuizApp</div>
   <div class="admin-icon">
-    <a href="admin.html" title="Admin Dashboard">
+    <a href="#" id="go-to-admin" title="Admin Dashboard">
       <i class="fa-solid fa-user" style="color: #fff;"></i>
     </a>
   </div>
 </header>
+
 <main>
-   <div class="container">
-    <h1>Tech Quiz</h1>
+  <div class="container" id="main-container">
+    
+    <!-- Start Screen -->
     <div id="start-screen">
+      <h1>Tech Quiz</h1>
       <input type="text" id="username" placeholder="Enter your name" />
       <select id="category">
         <option value="">Select Category</option>
@@ -31,13 +34,13 @@
         <option value="backend">Backend</option>
         <option value="react">React</option>
       </select>
-
       <button id="start-btn">Start Quiz</button>
     </div>
 
+    <!-- Quiz Screen -->
     <div id="quiz-screen" class="hidden">
       <div class="quiz-header">
-        <div id="timer">Time: 20</div>
+        <div id="timer">Time: 10</div>
         <div id="progress-bar-container">
           <div id="progress-bar"></div>
         </div>
@@ -48,14 +51,56 @@
       </div>
     </div>
 
+    <!-- Result Screen -->
     <div id="result-screen" class="hidden">
       <h2>Quiz Complete!</h2>
       <p id="score-display"></p>
       <button id="restart-btn">Restart</button>
     </div>
+
+    <!-- Leaderboard Screen -->
+    <div id="leaderboard-screen" class="hidden">
+      <h2>Leaderboard</h2>
+      <ul id="leaderboard-list"></ul>
+      <button id="back-to-start">Back to Start</button>
+    </div>
+
+    <!-- Admin Login Screen -->
+    <div id="admin-login-screen" class="hidden">
+      <h2>Admin Login</h2>
+      <input type="text" id="admin-username" placeholder="Username" />
+      <input type="password" id="admin-password" placeholder="Password" />
+      <button id="admin-login-btn">Login</button>
+      <button id="cancel-login">Cancel</button>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-screen" class="hidden">
+      <h2>Admin Panel</h2>
+      <input type="text" id="admin-question" placeholder="Enter question" />
+      <input type="text" id="admin-option1" placeholder="Option 1" />
+      <input type="text" id="admin-option2" placeholder="Option 2" />
+      <input type="text" id="admin-option3" placeholder="Option 3" />
+      <input type="text" id="admin-option4" placeholder="Option 4" />
+      <input type="text" id="admin-correct" placeholder="Correct answer" />
+      <select id="admin-category">
+        <option value="">Select Category</option>
+        <option value="javascript">JavaScript</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="sql">SQL</option>
+        <option value="frontend">Frontend</option>
+        <option value="backend">Backend</option>
+        <option value="react">React</option>
+      </select>
+      <input type="number" id="num-questions" min="1" placeholder="Number of Questions"/>
+      <button id="save-question">Save Question</button>
+      <button id="close-admin">Close Admin</button>
+    </div>
+
   </div>
- 
 </main>
-    <script src="script.js"></script>   
+
+<script src="script.js"></script>
 </body>
 </html>
