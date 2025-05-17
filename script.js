@@ -33,6 +33,7 @@ function loadQuestions(category) {
 // Start quiz
 startBtn.addEventListener("click", () => {
   username = usernameInput.value.trim() || "Anonymous"; // Capture username here
+  usernameInput.value = '';
   const category = categorySelect.value;
   const limits = JSON.parse(localStorage.getItem("questionLimits")) || {};
   const questionLimit = limits[category] || 10;
