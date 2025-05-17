@@ -49,7 +49,7 @@ startBtn.addEventListener("click", () => {
   showQuestion();
 });
 
-// Show current question
+// Show question
 function showQuestion() {
   resetState();
   if (currentQuestion >= questions.length) {

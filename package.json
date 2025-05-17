@@ -1,0 +1,11 @@
+{
+  "name": "quiz-app",
+  "version": "1.0.0",
+  "description": "An interactive quiz app that has tech related categories and questions on each category",
+  "main": "script.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "Phetso donald nkosi",
+  "license": "ISC"
+}
