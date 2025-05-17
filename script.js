@@ -1,218 +1,224 @@
-// Data Structure
-let quizData = {
-  categories: {
-    javascript: [],
-    html: [],
-    css: [],
-    sql: [],
-    react: [],
-    general: [],
-  },
-  settings: {
-    questionsPerQuiz: 5,
-    timePerQuestion: 10,
-  },
-  highScores: [],
-};
+// Quiz state
+let currentQuestion = 0;
+let score = 0;
+let timer;
+let timeLeft = 30;
+let questions = [];
+let username = "";
 
-let currentState = {
-  username: "",
-  category: "",
-  questions: [],
-  currentQuestionIndex: 0,
-  score: 0,
-  timer: null,
-  timeLeft: 10,
-  selectedOption: null,
-  editingQuestionId: null,
-};
-
-// DOM Elements (combined)
-const startBtn = document.getElementById("start-btn");
-const restartBtn = document.getElementById("restart-btn");
-const backBtn = document.getElementById("back-to-start");
+// DOM elements
+const startScreen = document.getElementById("start-screen");
 const quizScreen = document.getElementById("quiz-screen");
 const resultScreen = document.getElementById("result-screen");
-const adminScreen = document.getElementById("admin-screen");
-const startScreen = document.getElementById("start-screen");
-
+const startBtn = document.getElementById("start-btn");
+const nextBtn = document.getElementById("next-btn");
+const restartBtn = document.getElementById("restart-btn");
+const questionElement = document.getElementById("question");
+const optionsElement = document.getElementById("options");
+const timerElement = document.getElementById("timer");
+const scoreElement = document.getElementById("score");
+const progressElement = document.getElementById("progress");
 const usernameInput = document.getElementById("username");
 const categorySelect = document.getElementById("category");
-const questionText = document.getElementById("question-text");
-const answerOptions = document.getElementById("answer-options");
-const timerDisplay = document.getElementById("timer");
-const scoreDisplay = document.getElementById("score-display");
-const progressBar = document.getElementById("progress-bar");
-const leaderboardList = document.getElementById("leaderboard-list");
+const finalScoreElement = document.getElementById("final-score");
+const highScoresElement = document.getElementById("high-scores");
 
-// Admin Inputs
-const adminInputs = {
-  question: document.getElementById("admin-question"),
-  option1: document.getElementById("admin-option1"),
-  option2: document.getElementById("admin-option2"),
-  option3: document.getElementById("admin-option3"),
-  option4: document.getElementById("admin-option4"),
-  correct: document.getElementById("admin-correct"),
-  category: document.getElementById("admin-category"),
-};
+// Load questions from localStorage or default
+function loadQuestions(category) {
+  const savedQuestions =
+    JSON.parse(localStorage.getItem("quizQuestions")) || {};
+  return savedQuestions[category] || [];
+}
 
-const saveQuestionBtn = document.getElementById("save-question");
+// Start quiz
+startBtn.addEventListener("click", () => {
+  username = usernameInput.value.trim() || "Anonymous"; // Capture username here
+  const category = categorySelect.value;
+  const limits = JSON.parse(localStorage.getItem("questionLimits")) || {};
+  const questionLimit = limits[category] || 10;
 
-// Admin login credentials
-const adminCredentials = {
-  username: "admin",
-  password: "1234",
-};
+  questions = shuffleArray(loadQuestions(category)).slice(0, questionLimit);
 
-// Load Sample Questions if Empty
-function loadSampleQuestions() {
-  if (Object.values(quizData.categories).every(cat => cat.length === 0)) {
-    quizData.categories.javascript.push({
-      id: Date.now(),
-      text: "What does JS stand for?",
-      options: ["Java Style", "JavaScript", "Just Script", "Jumpy Syntax"],
-      correctAnswer: 1,
-    });
-    quizData.categories.html.push({
-      id: Date.now() + 1,
-      text: "Which tag is used to link CSS?",
-      options: ["<css>", "<style>", "<link>", "<script>"],
-      correctAnswer: 2,
-    });
-    quizData.categories.css.push({
-      id: Date.now() + 2,
-      text: "Which property is used for background color?",
-      options: ["bg-color", "color-bg", "backgroundColor", "background-color"],
-      correctAnswer: 3,
-    });
-    quizData.categories.sql.push({
-      id: Date.now() + 3,
-      text: "What is the command to select all rows in SQL?",
-      options: ["SELECT ALL", "GET *", "SELECT *", "FETCH ALL"],
-      correctAnswer: 2,
-    });
-    quizData.categories.react.push({
-      id: Date.now() + 4,
-      text: "What is React mainly used for?",
-      options: ["Database", "UI Building", "Routing", "Storage"],
-      correctAnswer: 1,
-    });
-
-    localStorage.setItem("techQuizAppData", JSON.stringify(quizData));
+  if (questions.length === 0) {
+    alert("No questions available for this category. Please try another one.");
+    return;
   }
-}
 
-// Initialize App
-function init() {
-  const savedData = localStorage.getItem("techQuizAppData");
-  if (savedData) {
-    quizData = JSON.parse(savedData);
-  } else {
-    loadSampleQuestions();
-  }
-  setupEventListeners();
-}
-
-function setupEventListeners() {
-  startBtn.addEventListener("click", () => {
-    const username = usernameInput.value.trim();
-    const category = categorySelect.value;
-    if (!username || !category) return alert("Enter your name & select a category.");
-    currentState.username = username;
-    currentState.category = category;
-    currentState.questions = quizData.categories[category] || [];
-    if (currentState.questions.length === 0) return alert("No questions in this category.");
-    startScreen.classList.add("hidden");
-    quizScreen.classList.remove("hidden");
-    currentState.currentQuestionIndex = 0;
-    currentState.score = 0;
-    currentState.timeLeft = quizData.settings.timePerQuestion;
-    showQuestion();
-    startTimer();
-  });
-
-  restartBtn.addEventListener("click", () => {
-    location.reload(); // You can make this smoother if you want
-  });
-
-  saveQuestionBtn.addEventListener("click", () => {
-    const question = adminInputs.question.value.trim();
-    const options = [
-      adminInputs.option1.value,
-      adminInputs.option2.value,
-      adminInputs.option3.value,
-      adminInputs.option4.value,
-    ];
-    const correct = parseInt(adminInputs.correct.value);
-    const category = adminInputs.category.value;
-
-    if (!question || options.some(o => !o) || isNaN(correct)) {
-      return alert("Please fill all fields correctly.");
-    }
-
-    const newQ = {
-      id: Date.now(),
-      text: question,
-      options: options,
-      correctAnswer: correct,
-    };
-
-    quizData.categories[category] = quizData.categories[category] || [];
-    quizData.categories[category].push(newQ);
-    localStorage.setItem("techQuizAppData", JSON.stringify(quizData));
-    alert("Question added successfully!");
-  });
-}
+  startScreen.classList.add("hidden");
+  quizScreen.classList.remove("hidden");
+  showQuestion();
+});
 
 // Show question
 function showQuestion() {
-  const currentQ = currentState.questions[currentState.currentQuestionIndex];
-  questionText.textContent = currentQ.text;
-  answerOptions.innerHTML = "";
+  resetState();
+  if (currentQuestion >= questions.length) {
+    showResult();
+    return;
+  }
 
-  currentQ.options.forEach((opt, index) => {
-    const li = document.createElement("li");
-    li.textContent = opt;
-    li.addEventListener("click", () => checkAnswer(index));
-    answerOptions.appendChild(li);
+  const question = questions[currentQuestion];
+  questionElement.textContent = question.text;
+
+  // Shuffle options
+  const shuffledOptions = shuffleArray([...question.options]);
+
+  shuffledOptions.forEach((option) => {
+    const button = document.createElement("button");
+    button.textContent = option;
+    button.classList.add("option-btn");
+    button.addEventListener("click", () =>
+      selectAnswer(option, question.answer)
+    );
+    optionsElement.appendChild(button);
   });
 
-  progressBar.style.width = `${((currentState.currentQuestionIndex + 1) / currentState.questions.length) * 100}%`;
-}
+  // Update progress
+  progressElement.style.width = `${
+    (currentQuestion / questions.length) * 100
+  }%`;
 
-// Timer logic
-function startTimer() {
-  timerDisplay.textContent = `Time: ${currentState.timeLeft}`;
-  currentState.timer = setInterval(() => {
-    currentState.timeLeft--;
-    timerDisplay.textContent = `Time: ${currentState.timeLeft}`;
-    if (currentState.timeLeft <= 0) {
-      clearInterval(currentState.timer);
-      showResult();
+  // Start timer
+  timeLeft = 30;
+  updateTimer();
+  timer = setInterval(() => {
+    timeLeft--;
+    updateTimer();
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      nextQuestion();
     }
   }, 1000);
 }
 
-// Check Answer
-function checkAnswer(index) {
-  const correct = currentState.questions[currentState.currentQuestionIndex].correctAnswer;
-  if (index === correct) currentState.score++;
-  currentState.currentQuestionIndex++;
-  if (currentState.currentQuestionIndex < currentState.questions.length) {
-    currentState.timeLeft = quizData.settings.timePerQuestion;
-    showQuestion();
-  } else {
-    clearInterval(currentState.timer);
-    showResult();
+// Update timer display
+function updateTimer() {
+  timerElement.textContent = `Time: ${timeLeft}s`;
+}
+
+// Reset question state
+function resetState() {
+  clearInterval(timer);
+  nextBtn.classList.add("hidden");
+  while (optionsElement.firstChild) {
+    optionsElement.removeChild(optionsElement.firstChild);
   }
 }
 
-// Show Result
+// Handle answer selection
+function selectAnswer(selectedOption, correctAnswer) {
+  clearInterval(timer);
+  const options = document.querySelectorAll(".option-btn");
+  let isCorrect = false;
+
+  options.forEach((option) => {
+    if (option.textContent === correctAnswer) {
+      option.classList.add("correct");
+    }
+    if (
+      option.textContent === selectedOption &&
+      selectedOption !== correctAnswer
+    ) {
+      option.classList.add("wrong");
+    }
+    option.disabled = true;
+  });
+
+  if (selectedOption === correctAnswer) {
+    score++;
+    isCorrect = true;
+  }
+
+  scoreElement.textContent = `Score: ${score}`;
+  nextBtn.classList.remove("hidden");
+}
+
+// Move to next question
+nextBtn.addEventListener("click", nextQuestion);
+
+function nextQuestion() {
+  currentQuestion++;
+  showQuestion();
+}
+
+// Show final result
 function showResult() {
   quizScreen.classList.add("hidden");
   resultScreen.classList.remove("hidden");
-  scoreDisplay.textContent = `Score: ${currentState.score} / ${currentState.questions.length}`;
+  finalScoreElement.textContent = `${username}, your score is ${score} out of ${questions.length}`;
+
+  // Save high score
+  saveHighScore(username, score, questions.length);
+  displayHighScores();
 }
 
-// Start it up
-init();
+// Save high score to localStorage
+// Save high score to localStorage (without date)
+function saveHighScore(name, score, total) {
+  name = name.trim() || "Anonymous";
+  const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+
+  // Add timestamp for better sorting
+  const newScore = {
+    name,
+    score,
+    total,
+    timestamp: Date.now(),
+  };
+
+  // Add new score
+  highScores.push(newScore);
+
+  // Remove duplicates (same name and same score/total)
+  const uniqueScores = highScores.filter(
+    (score, index, self) =>
+      index ===
+      self.findIndex(
+        (s) =>
+          s.name === score.name &&
+          s.score === score.score &&
+          s.total === score.total
+      )
+  );
+
+  // Sort by score percentage then timestamp
+  const sortedScores = uniqueScores
+    .sort((a, b) => {
+      const aRatio = a.score / a.total;
+      const bRatio = b.score / b.total;
+      if (bRatio !== aRatio) return bRatio - aRatio;
+      return b.timestamp - a.timestamp;
+    })
+    .slice(0, 5); // Keep only top 5
+
+  localStorage.setItem("highScores", JSON.stringify(sortedScores));
+}
+
+// Display high scores
+// Display high scores (without dates)
+function displayHighScores() {
+  const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+  highScores.sort((a, b) => b.score - a.score);
+
+  if (highScores.length > 0) {
+    highScoresElement.innerHTML = "<h2>High Scores</h2>";
+    highScores.slice(0, 5).forEach((score, index) => {
+      highScoresElement.innerHTML += `
+              <p>${index + 1}. ${score.name}: ${score.score}/${score.total}</p>
+          `;
+    });
+  }
+}
+
+// Restart quiz
+restartBtn.addEventListener("click", () => {
+  currentQuestion = 0;
+  score = 0;
+  resultScreen.classList.add("hidden");
+  startScreen.classList.remove("hidden");
+});
+
+// Utility function to shuffle array
+function shuffleArray(array) {
+  return array.sort(() => Math.random() - 0.5);
+}

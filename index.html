@@ -1,136 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tech Quiz App</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<body>
-  <header class="header">
-    <div class="logo">🧠 QuizApp</div>
-    <div class="admin-icon">
-      <a href="#" id="go-to-admin" title="Admin Dashboard">
-        <i class="fa-solid fa-user" style="color: #fff;"></i>
-      </a>
-    </div>
-  </header>
-
-  <main>
-    <div class="container" id="main-container">
-
-      <!-- Start Screen -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tech Quiz</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
       <div id="start-screen" class="screen">
-        <h1>Tech Quiz</h1>
+        <h1>Tech Quiz Challenge</h1>
         <input type="text" id="username" placeholder="Enter your name" />
         <select id="category">
-          <option value="">Select Category</option>
           <option value="javascript">JavaScript</option>
           <option value="html">HTML</option>
           <option value="css">CSS</option>
-          <option value="sql">SQL</option>
-          <option value="frontend">Frontend</option>
-          <option value="backend">Backend</option>
-          <option value="react">React</option>
         </select>
         <button id="start-btn">Start Quiz</button>
-        <button id="admin-login">Admin Login</button>
+        <a href="admin.html" class="admin-link">Admin Panel</a>
       </div>
 
-      <!-- Quiz Screen -->
       <div id="quiz-screen" class="screen hidden">
-        <div class="quiz-header">
-          <div class="user-info">
-            <span id="current-user"></span>
-            <span id="current-category"></span>
-          </div>
-          <div class="quiz-stats">
-            <span id="question-count"></span>
-            <span id="timer">30s</span>
-            <span id="score">Score: 0</span>
-          </div>
+        <div class="header">
+          <div id="timer">Time: 30s</div>
+          <div id="score">Score: 0</div>
         </div>
-        <div class="progress-container">
-          <div id="progress-bar" class="progress-bar"></div>
+        <div id="progress-bar">
+          <div id="progress"></div>
         </div>
-        <div id="question-container">
-          <h2 id="question-text">Question?</h2>
-          <ul id="answer-options"></ul>
-        </div>
-        <button id="next-question" class="hidden">Next Question</button>
+        <h2 id="question"></h2>
+        <div id="options" class="options"></div>
+        <button id="next-btn" class="hidden">Next</button>
       </div>
 
-      <!-- Result Screen -->
       <div id="result-screen" class="screen hidden">
-        <h2>Quiz Complete!</h2>
-        <p id="score-display"></p>
-        <div class="high-scores">
-          <h3>High Scores</h3>
-          <ol id="high-scores-list"></ol>
-        </div>
-        <button id="restart-quiz">Take Another Quiz</button>
+        <h1>Quiz Completed!</h1>
+        <p id="final-score"></p>
+        <div id="high-scores"></div>
+        <button id="restart-btn">Restart Quiz</button>
+        <a href="admin.html" class="admin-link">Admin Panel</a>
       </div>
-
-      <!-- Leaderboard Screen -->
-      <div id="leaderboard-screen" class="screen hidden">
-        <h2>Leaderboard</h2>
-        <ul id="leaderboard-list"></ul>
-        <button id="back-to-start">Back to Start</button>
-      </div>
-
-      <!-- Admin Login Screen -->
-      <div id="admin-login-screen" class="screen hidden">
-        <h2>Admin Login</h2>
-        <input type="text" id="admin-username" placeholder="Username" />
-        <input type="password" id="admin-password" placeholder="Password" />
-        <button id="admin-login-btn">Login</button>
-        <button id="cancel-login">Cancel</button>
-      </div>
-
-      <!-- Admin Panel -->
-      <div id="admin-screen" class="screen hidden">
-        <h2>Admin Panel</h2>
-        <div class="admin-actions">
-          <button id="add-question">Add New Question</button>
-          <button id="view-questions">View/Edit Questions</button>
-          <button id="logout">Logout</button>
-        </div>
-
-        <!-- Question Management Form -->
-        <div id="question-form" class="hidden">
-          <h3>Add/Edit Question</h3>
-          <select id="form-category">
-            <option value="">Select Category</option>
-            <option value="javascript">JavaScript</option>
-            <option value="html">HTML</option>
-            <option value="css">CSS</option>
-            <option value="sql">SQL</option>
-            <option value="frontend">Frontend</option>
-            <option value="backend">Backend</option>
-            <option value="react">React</option>
-          </select>
-          <input type="text" id="question-text-input" placeholder="Question text" />
-          <div id="answer-inputs">
-            <input type="text" class="answer-input" placeholder="Option 1" data-correct="true" />
-            <input type="text" class="answer-input" placeholder="Option 2" />
-            <input type="text" class="answer-input" placeholder="Option 3" />
-            <input type="text" class="answer-input" placeholder="Option 4" />
-          </div>
-          <button id="save-question">Save Question</button>
-          <button id="cancel-edit">Cancel</button>
-        </div>
-
-        <!-- Questions List -->
-        <div id="questions-list" class="hidden">
-          <h3>Questions</h3>
-          <div id="questions-container"></div>
-        </div>
-      </div>
-
     </div>
-  </main>
-
-  <script src="script.js"></script>
-</body>
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>

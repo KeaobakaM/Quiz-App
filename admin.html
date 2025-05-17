@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Admin</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Quiz Admin Panel</h1>
+      <div class="form-group">
+        <label>Category:</label>
+        <select id="admin-category">
+          <option value="javascript">JavaScript</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Question:</label>
+        <input type="text" id="question-text" placeholder="Enter question" />
+      </div>
+      <div class="form-group">
+        <label>Options (comma separated):</label>
+        <input
+          type="text"
+          id="options-text"
+          placeholder="Option 1, Option 2, Option 3"
+        />
+      </div>
+      <div class="form-group">
+        <label>Correct Answer (index):</label>
+        <input type="number" id="correct-answer" min="0" max="3" value="0" />
+      </div>
+      <button id="add-question">Add Question</button>
+      <div class="form-group">
+        <label>Questions Limit:</label>
+        <input
+          type="number"
+          id="question-limit"
+          min="1"
+          placeholder="Default: 10"
+          value="10"
+        />
+      </div>
+      <div id="question-list"></div>
+      <a href="index.html" class="back-link">Back to Quiz</a>
+    </div>
+    <script src="admin.js"></script>
+  </body>
+</html>
