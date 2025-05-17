@@ -1,22 +1,41 @@
-// Elements
+// Data Structure
+let quizData = {
+  categories: {
+    javascript: [],
+    html: [],
+    css: [],
+    sql: [],
+    react: [],
+    general: [],
+  },
+  settings: {
+    questionsPerQuiz: 5,
+    timePerQuestion: 10,
+  },
+  highScores: [],
+};
+
+let currentState = {
+  username: "",
+  category: "",
+  questions: [],
+  currentQuestionIndex: 0,
+  score: 0,
+  timer: null,
+  timeLeft: 10,
+  selectedOption: null,
+  editingQuestionId: null,
+};
+
+// DOM Elements (combined)
 const startBtn = document.getElementById("start-btn");
 const restartBtn = document.getElementById("restart-btn");
 const backBtn = document.getElementById("back-to-start");
-const goToAdmin = document.getElementById("go-to-admin");
-const closeAdmin = document.getElementById("close-admin");
-const saveQuestionBtn = document.getElementById("save-question");
-const adminLoginBtn = document.getElementById("admin-login-btn");
-const cancelLogin = document.getElementById("cancel-login");
-
-// Screens
-const startScreen = document.getElementById("start-screen");
 const quizScreen = document.getElementById("quiz-screen");
 const resultScreen = document.getElementById("result-screen");
-const leaderboardScreen = document.getElementById("leaderboard-screen");
-const adminLoginScreen = document.getElementById("admin-login-screen");
 const adminScreen = document.getElementById("admin-screen");
+const startScreen = document.getElementById("start-screen");
 
-// Inputs
 const usernameInput = document.getElementById("username");
 const categorySelect = document.getElementById("category");
 const questionText = document.getElementById("question-text");
@@ -35,164 +54,165 @@ const adminInputs = {
   option4: document.getElementById("admin-option4"),
   correct: document.getElementById("admin-correct"),
   category: document.getElementById("admin-category"),
-  number: document.getElementById("num-questions")
 };
 
-const adminUsernameInput = document.getElementById("admin-username");
-const adminPasswordInput = document.getElementById("admin-password");
+const saveQuestionBtn = document.getElementById("save-question");
 
-let questions = JSON.parse(localStorage.getItem("questions")) || [];
-let quizQuestions = [];
-let currentQuestionIndex = 0;
-let score = 0;
-let timer;
-let timeLeft = 10;
-
+// Admin login credentials
 const adminCredentials = {
   username: "admin",
-  password: "1234"
+  password: "1234",
 };
 
-// Dummy Questions Seeder
-if (questions.length === 0) {
-  questions = [
-    { question: "What does JS stand for?", option1: "Java Style", option2: "JavaScript", option3: "Just Script", option4: "Jumpy Syntax", correct: "JavaScript", category: "javascript" },
-    { question: "Which tag is used to link CSS?", option1: "<css>", option2: "<style>", option3: "<link>", option4: "<script>", correct: "<link>", category: "html" },
-    { question: "Which property is used for background color?", option1: "bg-color", option2: "color-bg", option3: "backgroundColor", option4: "background-color", correct: "background-color", category: "css" },
-    { question: "What is the command to select all rows in SQL?", option1: "SELECT ALL", option2: "GET *", option3: "SELECT *", option4: "FETCH ALL", correct: "SELECT *", category: "sql" },
-    { question: "What is React mainly used for?", option1: "Database", option2: "UI Building", option3: "Routing", option4: "Storage", correct: "UI Building", category: "react" }
-  ];
-  localStorage.setItem("questions", JSON.stringify(questions));
-}
+// Load Sample Questions if Empty
+function loadSampleQuestions() {
+  if (Object.values(quizData.categories).every(cat => cat.length === 0)) {
+    quizData.categories.javascript.push({
+      id: Date.now(),
+      text: "What does JS stand for?",
+      options: ["Java Style", "JavaScript", "Just Script", "Jumpy Syntax"],
+      correctAnswer: 1,
+    });
+    quizData.categories.html.push({
+      id: Date.now() + 1,
+      text: "Which tag is used to link CSS?",
+      options: ["<css>", "<style>", "<link>", "<script>"],
+      correctAnswer: 2,
+    });
+    quizData.categories.css.push({
+      id: Date.now() + 2,
+      text: "Which property is used for background color?",
+      options: ["bg-color", "color-bg", "backgroundColor", "background-color"],
+      correctAnswer: 3,
+    });
+    quizData.categories.sql.push({
+      id: Date.now() + 3,
+      text: "What is the command to select all rows in SQL?",
+      options: ["SELECT ALL", "GET *", "SELECT *", "FETCH ALL"],
+      correctAnswer: 2,
+    });
+    quizData.categories.react.push({
+      id: Date.now() + 4,
+      text: "What is React mainly used for?",
+      options: ["Database", "UI Building", "Routing", "Storage"],
+      correctAnswer: 1,
+    });
 
-// Start Quiz
-startBtn.addEventListener("click", () => {
-  const username = usernameInput.value.trim();
-  const category = categorySelect.value;
-  if (!username || !category) return alert("Please enter your name and select a category.");
-  quizQuestions = questions.filter(q => q.category === category);
-  if (quizQuestions.length === 0) return alert("No questions for this category.");
-  startScreen.classList.add("hidden");
-  quizScreen.classList.remove("hidden");
-  currentQuestionIndex = 0;
-  score = 0;
-  timeLeft = 10;
-  showQuestion();
-  startTimer();
-});
-
-// Show Question
-function showQuestion() {
-  const currentQ = quizQuestions[currentQuestionIndex];
-  questionText.textContent = currentQ.question;
-  answerOptions.innerHTML = "";
-  [currentQ.option1, currentQ.option2, currentQ.option3, currentQ.option4].forEach(opt => {
-    const li = document.createElement("li");
-    li.textContent = opt;
-    li.addEventListener("click", () => checkAnswer(opt));
-    answerOptions.appendChild(li);
-  });
-  progressBar.style.width = `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%`;
-}
-
-function checkAnswer(selected) {
-  const currentQ = quizQuestions[currentQuestionIndex];
-  if (selected === currentQ.correct) score++;
-  currentQuestionIndex++;
-  if (currentQuestionIndex < quizQuestions.length) {
-    timeLeft = 10;
-    showQuestion();
-  } else {
-    clearInterval(timer);
-    showResult();
+    localStorage.setItem("techQuizAppData", JSON.stringify(quizData));
   }
 }
 
+// Initialize App
+function init() {
+  const savedData = localStorage.getItem("techQuizAppData");
+  if (savedData) {
+    quizData = JSON.parse(savedData);
+  } else {
+    loadSampleQuestions();
+  }
+  setupEventListeners();
+}
+
+function setupEventListeners() {
+  startBtn.addEventListener("click", () => {
+    const username = usernameInput.value.trim();
+    const category = categorySelect.value;
+    if (!username || !category) return alert("Enter your name & select a category.");
+    currentState.username = username;
+    currentState.category = category;
+    currentState.questions = quizData.categories[category] || [];
+    if (currentState.questions.length === 0) return alert("No questions in this category.");
+    startScreen.classList.add("hidden");
+    quizScreen.classList.remove("hidden");
+    currentState.currentQuestionIndex = 0;
+    currentState.score = 0;
+    currentState.timeLeft = quizData.settings.timePerQuestion;
+    showQuestion();
+    startTimer();
+  });
+
+  restartBtn.addEventListener("click", () => {
+    location.reload(); // You can make this smoother if you want
+  });
+
+  saveQuestionBtn.addEventListener("click", () => {
+    const question = adminInputs.question.value.trim();
+    const options = [
+      adminInputs.option1.value,
+      adminInputs.option2.value,
+      adminInputs.option3.value,
+      adminInputs.option4.value,
+    ];
+    const correct = parseInt(adminInputs.correct.value);
+    const category = adminInputs.category.value;
+
+    if (!question || options.some(o => !o) || isNaN(correct)) {
+      return alert("Please fill all fields correctly.");
+    }
+
+    const newQ = {
+      id: Date.now(),
+      text: question,
+      options: options,
+      correctAnswer: correct,
+    };
+
+    quizData.categories[category] = quizData.categories[category] || [];
+    quizData.categories[category].push(newQ);
+    localStorage.setItem("techQuizAppData", JSON.stringify(quizData));
+    alert("Question added successfully!");
+  });
+}
+
+// Show question
+function showQuestion() {
+  const currentQ = currentState.questions[currentState.currentQuestionIndex];
+  questionText.textContent = currentQ.text;
+  answerOptions.innerHTML = "";
+
+  currentQ.options.forEach((opt, index) => {
+    const li = document.createElement("li");
+    li.textContent = opt;
+    li.addEventListener("click", () => checkAnswer(index));
+    answerOptions.appendChild(li);
+  });
+
+  progressBar.style.width = `${((currentState.currentQuestionIndex + 1) / currentState.questions.length) * 100}%`;
+}
+
+// Timer logic
 function startTimer() {
-  timer = setInterval(() => {
-    timeLeft--;
-    timerDisplay.textContent = `Time: ${timeLeft}`;
-    if (timeLeft <= 0) {
-      clearInterval(timer);
+  timerDisplay.textContent = `Time: ${currentState.timeLeft}`;
+  currentState.timer = setInterval(() => {
+    currentState.timeLeft--;
+    timerDisplay.textContent = `Time: ${currentState.timeLeft}`;
+    if (currentState.timeLeft <= 0) {
+      clearInterval(currentState.timer);
       showResult();
     }
   }, 1000);
 }
 
+// Check Answer
+function checkAnswer(index) {
+  const correct = currentState.questions[currentState.currentQuestionIndex].correctAnswer;
+  if (index === correct) currentState.score++;
+  currentState.currentQuestionIndex++;
+  if (currentState.currentQuestionIndex < currentState.questions.length) {
+    currentState.timeLeft = quizData.settings.timePerQuestion;
+    showQuestion();
+  } else {
+    clearInterval(currentState.timer);
+    showResult();
+  }
+}
+
+// Show Result
 function showResult() {
   quizScreen.classList.add("hidden");
   resultScreen.classList.remove("hidden");
-  scoreDisplay.textContent = `You scored ${score} / ${quizQuestions.length}`;
-  const username = usernameInput.value.trim();
-  const entry = { name: username, score };
-  const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-  leaderboard.push(entry);
-  leaderboard.sort((a, b) => b.score - a.score);
-  localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
-  showLeaderboard();
+  scoreDisplay.textContent = `Score: ${currentState.score} / ${currentState.questions.length}`;
 }
 
-function showLeaderboard() {
-  leaderboardList.innerHTML = "";
-  const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-  leaderboard.slice(0, 10).forEach(entry => {
-    const li = document.createElement("li");
-    li.textContent = `${entry.name}: ${entry.score}`;
-    leaderboardList.appendChild(li);
-  });
-}
-
-// Admin Panel
-
-goToAdmin.addEventListener("click", () => {
-  adminLoginScreen.classList.remove("hidden");
-  startScreen.classList.add("hidden");
-});
-
-adminLoginBtn.addEventListener("click", () => {
-  const user = adminUsernameInput.value.trim();
-  const pass = adminPasswordInput.value.trim();
-  if (user === adminCredentials.username && pass === adminCredentials.password) {
-    adminLoginScreen.classList.add("hidden");
-    adminScreen.classList.remove("hidden");
-  } else {
-    alert("Wrong credentials!");
-  }
-});
-
-cancelLogin.addEventListener("click", () => {
-  adminLoginScreen.classList.add("hidden");
-  startScreen.classList.remove("hidden");
-});
-
-closeAdmin.addEventListener("click", () => {
-  adminScreen.classList.add("hidden");
-  startScreen.classList.remove("hidden");
-});
-
-saveQuestionBtn.addEventListener("click", () => {
-  const newQ = {
-    question: adminInputs.question.value.trim(),
-    option1: adminInputs.option1.value.trim(),
-    option2: adminInputs.option2.value.trim(),
-    option3: adminInputs.option3.value.trim(),
-    option4: adminInputs.option4.value.trim(),
-    correct: adminInputs.correct.value.trim(),
-    category: adminInputs.category.value
-  };
-  if (!Object.values(newQ).every(Boolean)) return alert("Fill all fields.");
-  questions.push(newQ);
-  localStorage.setItem("questions", JSON.stringify(questions));
-  alert("Question saved!");
-  Object.values(adminInputs).forEach(input => input.value = "");
-});
-
-restartBtn.addEventListener("click", () => {
-  resultScreen.classList.add("hidden");
-  leaderboardScreen.classList.remove("hidden");
-});
-
-backBtn.addEventListener("click", () => {
-  leaderboardScreen.classList.add("hidden");
-  startScreen.classList.remove("hidden");
-});
+// Start it up
+init();
