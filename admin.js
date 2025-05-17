@@ -77,6 +77,29 @@ window.deleteQuestion = function (index) {
     loadQuestionsForCategory();
   }
 };
+// Save question limit per category
+function saveQuestionLimit(category, limit) {
+  const limits = JSON.parse(localStorage.getItem("questionLimits")) || {};
+  limits[category] = limit;
+  localStorage.setItem("questionLimits", JSON.stringify(limits));
+}
+
+// Load question limit
+function loadQuestionLimit(category) {
+  const limits = JSON.parse(localStorage.getItem("questionLimits")) || {};
+  return limits[category] || 10; // Default to 10
+}
+
+// Update when limit changes
+document.getElementById("question-limit").addEventListener("change", (e) => {
+  const category = document.getElementById("admin-category").value;
+  saveQuestionLimit(category, parseInt(e.target.value));
+});
+
+categorySelect.addEventListener("change", () => {
+  const limit = loadQuestionLimit(categorySelect.value);
+  document.getElementById("question-limit").value = limit;
+});
 
 // Initialize
 categorySelect.addEventListener("change", loadQuestionsForCategory);

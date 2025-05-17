@@ -32,17 +32,17 @@ function loadQuestions(category) {
 
 // Start quiz
 startBtn.addEventListener("click", () => {
-  username = usernameInput.value.trim() || "Anonymous";
+  username = usernameInput.value.trim() || "Anonymous"; // Capture username here
   const category = categorySelect.value;
-  questions = loadQuestions(category);
+  const limits = JSON.parse(localStorage.getItem("questionLimits")) || {};
+  const questionLimit = limits[category] || 10;
+
+  questions = shuffleArray(loadQuestions(category)).slice(0, questionLimit);
 
   if (questions.length === 0) {
     alert("No questions available for this category. Please try another one.");
     return;
   }
-
-  // Shuffle questions and limit to 10
-  questions = shuffleArray(questions).slice(0, 10);
 
   startScreen.classList.add("hidden");
   quizScreen.classList.remove("hidden");
@@ -155,13 +155,43 @@ function showResult() {
 // Save high score to localStorage
 // Save high score to localStorage (without date)
 function saveHighScore(name, score, total) {
+  name = name.trim() || "Anonymous";
   const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
-  highScores.push({
+
+  // Add timestamp for better sorting
+  const newScore = {
     name,
     score,
-    total, // Removed the date property
-  });
-  localStorage.setItem("highScores", JSON.stringify(highScores));
+    total,
+    timestamp: Date.now(),
+  };
+
+  // Add new score
+  highScores.push(newScore);
+
+  // Remove duplicates (same name and same score/total)
+  const uniqueScores = highScores.filter(
+    (score, index, self) =>
+      index ===
+      self.findIndex(
+        (s) =>
+          s.name === score.name &&
+          s.score === score.score &&
+          s.total === score.total
+      )
+  );
+
+  // Sort by score percentage then timestamp
+  const sortedScores = uniqueScores
+    .sort((a, b) => {
+      const aRatio = a.score / a.total;
+      const bRatio = b.score / b.total;
+      if (bRatio !== aRatio) return bRatio - aRatio;
+      return b.timestamp - a.timestamp;
+    })
+    .slice(0, 5); // Keep only top 5
+
+  localStorage.setItem("highScores", JSON.stringify(sortedScores));
 }
 
 // Display high scores
